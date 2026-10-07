@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday, My Love! 🌸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+      <link rel="icon" href="asura-log.png" type="image/png" />
+    
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100dvh; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #fffcf5 0%, #faecd9 100%);
+            font-family: 'Quicksand', sans-serif;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating and Twinkling background elements */
+        .bg-icon {
+            position: absolute;
+            font-size: 30px;
+            opacity: 0.6;
+            animation: float 6s infinite ease-in-out;
+            z-index: 0;
+        }
+
+        .twinkle {
+            animation: float 6s infinite ease-in-out, twinkle 2s infinite ease-in-out !important;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 0.2; transform: scale(0.7); }
+        }
+
+        /* -------------------------------------------
+           INTRO SCREEN (LIKE BUTTON)
+           ------------------------------------------- */
+        #intro-screen {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #fffcf5 0%, #faecd9 100%);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .like-btn {
+            background: #ffb6c1;
+            border: none;
+            border-radius: 50%;
+            width: 90px;
+            height: 90px;
+            font-size: 40px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 107, 139, 0.4);
+            animation: pulse-heart 1.5s infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            transition: transform 0.2s;
+        }
+
+        .like-btn:active {
+            transform: scale(0.85);
+        }
+
+        @keyframes pulse-heart {
+            0% { transform: scale(1); box-shadow: 0 10px 30px rgba(255, 107, 139, 0.4); }
+            50% { transform: scale(1.1); box-shadow: 0 15px 40px rgba(255, 107, 139, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 10px 30px rgba(255, 107, 139, 0.4); }
+        }
+
+        /* -------------------------------------------
+           MAIN CONTAINER
+           ------------------------------------------- */
+        .container {
+            position: relative;
+            z-index: 10;
+            padding: 10px;
+            width: 100%;
+            max-width: 450px;
+            height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #surprise-wrapper {
+            display: none; 
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #gift-box {
+            font-size: 140px;
+            cursor: pointer;
+            user-select: none;
+            animation: bounce 2s infinite;
+            transition: transform 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #gift-box:active {
+            transform: scale(0.9);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+
+        .instruction {
+            color: #5c4a45;
+            font-size: 1.3rem;
+            margin-top: 15px;
+            font-weight: 700;
+        }
+
+        /* -------------------------------------------
+           THE MESSAGE CARD
+           ------------------------------------------- */
+        #message-card {
+            display: none;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(92, 74, 69, 0.15);
+            border: 1px solid #f0e6e1;
+            transform: scale(0.1);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            width: 100%;
+            /* ធ្វើឱ្យកាតលាតពេញកម្ពស់អេក្រង់ ដើម្បីបំបាត់ចន្លោះទទេលើ/ក្រោម */
+            height: 93dvh; 
+            max-height: 880px;
+            padding-bottom: 60px; 
+            margin-top: 40px; 
+        }
+
+        #message-card.show {
+            display: block;
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* -------------------------------------------
+           CUTE DJ MUSIC PLAYER & PLAYLIST
+           ------------------------------------------- */
+        .dj-player {
+            position: absolute;
+            top: -38px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 40px;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 6px 15px rgba(255, 107, 139, 0.15);
+            z-index: 102; 
+            border: 2px solid #ffb6c1;
+            width: 92%;
+            max-width: 330px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .dj-player.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .vinyl-record {
+            width: 42px;
+            height: 42px;
+            background: #222;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid #333;
+            box-shadow: inset 0 0 0 2px #555, 0 2px 5px rgba(0,0,0,0.2);
+            animation: spin 3s linear infinite;
+            animation-play-state: paused;
+            flex-shrink: 0;
+        }
+
+        .vinyl-record::after {
+            content: "💖";
+            font-size: 12px;
+            background: #ffb6c1;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .vinyl-record.playing {
+            animation-play-state: running;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .track-info {
+            flex-grow: 1;
+            text-align: left;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .track-name {
+            color: #ff6b8b;
+            font-size: 0.85rem;
+            font-weight: 800;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* -------------------------------------------
+           DANCING AUDIO VISUALIZER
+           ------------------------------------------- */
+        .visualizer {
+            display: flex;
+            gap: 3px;
+            height: 12px;
+            align-items: flex-end;
+        }
+
+        .bar {
+            width: 4px;
+            background: #ffb6c1;
+            border-radius: 2px;
+            height: 3px;
+            transition: height 0.2s;
+        }
+
+        .visualizer.playing .bar {
+            animation: dance 0.5s infinite alternate ease-in-out;
+        }
+
+        .visualizer.playing .bar:nth-child(1) { animation-duration: 0.4s; }
+        .visualizer.playing .bar:nth-child(2) { animation-duration: 0.3s; animation-delay: 0.1s; }
+        .visualizer.playing .bar:nth-child(3) { animation-duration: 0.5s; animation-delay: 0.2s; }
+        .visualizer.playing .bar:nth-child(4) { animation-duration: 0.35s; animation-delay: 0.1s; }
+        .visualizer.playing .bar:nth-child(5) { animation-duration: 0.45s; animation-delay: 0.3s; }
+        .visualizer.playing .bar:nth-child(6) { animation-duration: 0.4s; animation-delay: 0.2s; }
+
+        @keyframes dance {
+            0% { height: 3px; }
+            100% { height: 12px; }
+        }
+
+        .dj-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .dj-btn {
+            background: #ffe4e8;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ff6b8b;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .dj-btn:active {
+            transform: scale(0.9);
+            background: #ffb6c1;
+            color: white;
+        }
+
+        /* Playlist Dropdown Menu */
+        .playlist-menu {
+            position: absolute;
+            top: 35px; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 330px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 15px;
+            border: 2px solid #ffb6c1;
+            box-shadow: 0 10px 25px rgba(255, 107, 139, 0.2);
+            z-index: 101;
+            display: none;
+            flex-direction: column;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 8px 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .playlist-menu.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .playlist-item {
+            padding: 10px 20px;
+            text-align: left;
+            font-size: 0.9rem;
+            color: #6a605c;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f6e3d1;
+        }
+
+        .playlist-item:last-child {
+            border-bottom: none;
+        }
+
+        .playlist-item:active {
+            background: #ffe4e8;
+        }
+
+        .playlist-item.active {
+            color: #ff6b8b;
+            font-weight: 900;
+            background: #fff0f2;
+        }
+
+        /* -------------------------------------------
+           SLIDER CONTENT
+           ------------------------------------------- */
+        .slider-container {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 20px; 
+            position: relative;
+        }
+
+        .slider-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s ease-in-out;
+            width: 500%;
+        }
+
+        .slide {
+            width: 20%;
+            height: 100%;
+            padding: 35px 15px 5px 15px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .slide-img {
+            width: 100%;
+            /* ពង្រីករូបភាពឱ្យកាន់តែធំ */
+            height: 62dvh; 
+            max-height: 650px;
+            object-fit: contain; 
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .slide h1 {
+            color: #ff6b8b;
+            font-size: 1.6rem;
+            margin: 0 0 5px 0;
+            font-weight: 800;
+        }
+
+        .slide p {
+            color: #6a605c;
+            font-size: 1rem;
+            line-height: 1.3;
+            margin: 0;
+            font-weight: 600;
+            padding: 0 5px;
+        }
+
+        /* Controls Area */
+        .controls-area {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 25px;
+            padding: 8px 18px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            outline: none;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-back {
+            background: #e2e2e2;
+            color: #ffffff;
+            font-weight: 800;
+        }
+
+        .btn-next {
+            background: #ffb6c1;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 3px 10px rgba(255, 182, 193, 0.5);
+        }
+
+        .btn:disabled {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .dots-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #eedbd1;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: #ffb6c1;
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Elements with Many More Sparkles ✨ -->
+    <div class="bg-icon" style="top: 15%; left: 15%;">🌸</div>
+    <div class="bg-icon" style="top: 75%; left: 10%; animation-delay: 1s;">🎈</div>
+    <div class="bg-icon twinkle" style="top: 30%; right: 15%; animation-delay: 2s; font-size: 40px;">✨</div>
+    <div class="bg-icon" style="top: 80%; right: 20%; animation-delay: 0.5s;">🎈</div>
+    <div class="bg-icon twinkle" style="top: 10%; right: 45%; animation-delay: 1.5s; font-size: 35px;">✨</div>
+    <div class="bg-icon twinkle" style="top: 55%; left: 85%; animation-delay: 2.2s; font-size: 45px;">✨</div>
+    <div class="bg-icon twinkle" style="top: 25%; left: 35%; animation-delay: 0.8s; font-size: 25px;">✨</div>
+    <div class="bg-icon twinkle" style="top: 85%; left: 45%; animation-delay: 1.2s; font-size: 30px;">✨</div>
+    
+    <div class="bg-icon twinkle" style="top: 5%; left: 50%; animation-delay: 0.3s; font-size: 20px;">✨</div>
+    <div class="bg-icon twinkle" style="top: 20%; right: 5%; animation-delay: 1.1s; font-size: 35px;">✨</div>
+    <div class="bg-icon twinkle" style="top: 40%; left: 5%; animation-delay: 0.5s; font-size: 40px;">✨</div>
+    <div class="bg-icon twinkle" style="top: 65%; right: 35%; animation-delay: 1.8s; font-size: 28px;">✨</div>
+    <div class="bg-icon twinkle" style="top: 90%; left: 15%; animation-delay: 2.5s; font-size: 32px;">✨</div>
+    <div class="bg-icon twinkle" style="top: 70%; right: 5%; animation-delay: 0.9s; font-size: 38px;">✨</div>
+    <div class="bg-icon twinkle" style="top: 45%; left: 25%; animation-delay: 1.4s; font-size: 22px;">✨</div>
+
+    <!-- AUDIO ELEMENTS -->
+    <audio id="boxAudio" src="song11.mp3" loop></audio>
+    <audio id="myAudio"></audio>
+
+    <!-- INTRO SCREEN WITH LIKE BUTTON -->
+    <div id="intro-screen">
+        <button class="like-btn" id="start-like-btn">❤️</button>
+    </div>
+
+    <div class="container">
+        <!-- The Gift -->
+        <div id="surprise-wrapper">
+            <div id="gift-box">🎁</div>
+            <div class="instruction" id="instruction-text">Tap the gift, My Love! ✨</div>
+        </div>
+
+        <!-- The Message Card -->
+        <div id="message-card">
+            
+            <!-- DJ Music Player UI -->
+            <div class="dj-player" id="dj-player">
+                <div class="vinyl-record" id="vinyl-record"></div>
+                <div class="track-info">
+                    <div class="track-name" id="track-name">Loading Music...</div>
+                    <div class="visualizer" id="visualizer">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                    </div>
+                </div>
+                <div class="dj-controls">
+                    <button class="dj-btn" id="playlist-btn">☰</button>
+                    <button class="dj-btn" id="play-pause-btn">▶</button>
+                    <button class="dj-btn" id="next-track-btn">⏭</button>
+                </div>
+            </div>
+
+            <!-- Playlist Dropdown -->
+            <div class="playlist-menu" id="playlist-menu"></div>
+
+            <div class="slider-container">
+                <div class="slider-track" id="slider-track">
+                    
+                    <div class="slide">
+                        <img src="1.gif" alt="Slide 1" class="slide-img">
+                        <h1>Happy Birthday! 🎂</h1>
+                        <p>Happy Birthday to the most amazing and beautiful girl in the world! 💖</p>
+                    </div>
+
+                    <div class="slide">
+                        <img src="2.gif" alt="Slide 2" class="slide-img">
+                        <h1>My Happiness ✨</h1>
+                        <p>Every moment I spend with you feels like a beautiful dream come true.</p>
+                    </div>
+
+                    <div class="slide">
+                        <img src="3.gif" alt="Slide 3" class="slide-img">
+                        <h1>My Sunshine 🌸</h1>
+                        <p>Your smile lights up my darkest days. I am so lucky to have you by my side.</p>
+                    </div>
+
+                    <div class="slide">
+                        <img src="4.gif" alt="Slide 4" class="slide-img">
+                        <h1>Make A Wish 🎈</h1>
+                        <p>Wishing you all the love, joy, and success you deserve today and always.</p>
+                    </div>
+
+                    <div class="slide">
+                        <img src="5.gif" alt="Slide 5" class="slide-img">
+                        <h1>I Love You! 👩‍❤️‍👨</h1>
+                        <p>I love you more than words can say. Enjoy your special day, my love! 💖</p>
+                    </div>
+
+                </div>
+            </div>
+            
+            <div class="controls-area">
+                <button class="btn btn-back" id="prev-btn" disabled>Back</button>
+                <div class="dots-container">
+                    <div class="dot active"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <button class="btn btn-next" id="next-btn">Next ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ----------------------------------------------------
+        // INTRO LIKE BUTTON LOGIC 
+        // ----------------------------------------------------
+        const introScreen = document.getElementById('intro-screen');
+        const startLikeBtn = document.getElementById('start-like-btn');
+        const boxAudio = document.getElementById('boxAudio');
+        const surpriseWrapper = document.getElementById('surprise-wrapper');
+
+        startLikeBtn.addEventListener('click', () => {
+            boxAudio.play().catch(e => console.log("Audio still blocked"));
+            
+            introScreen.style.opacity = '0';
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+                surpriseWrapper.style.display = 'flex';
+            }, 500);
+        });
+
+        // ----------------------------------------------------
+        // AUDIO PLAYER & PLAYLIST LOGIC
+        // ----------------------------------------------------
+        const myAudio = document.getElementById('myAudio');
+        const vinyl = document.getElementById('vinyl-record');
+        const visualizer = document.getElementById('visualizer');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const trackNameDisplay = document.getElementById('track-name');
+        const playlistMenu = document.getElementById('playlist-menu');
+        const playlistBtn = document.getElementById('playlist-btn');
+
+        const tracks = [
+            { src: 'song5.mp3', name: 'Happy Birthday 🎂' },
+            { src: 'song2.mp3', name: 'My Love Song 💖' },
+            { src: 'song3.mp3', name: 'Sweet Memories 🌸' },
+            { src: 'song4.mp3', name: 'Forever Yours 💕' },
+            { src: 'song1.1.mp3', name: 'Beautiful Smile ✨' },
+            { src: 'song6.mp3', name: 'Perfect Together 💑' },
+            { src: 'song7.mp3', name: 'Our Journey 🎈' },
+            { src: 'song8.mp3', name: 'My Everything 💝' },
+            { src: 'song9.mp3', name: 'Endless Love 🌟' },
+            { src: 'song10.webm', name: 'Beautiful Moments ✨' }
+        ];
+        
+        let currentTrackIdx = 0;
+
+        tracks.forEach((track, index) => {
+            const item = document.createElement('div');
+            item.className = 'playlist-item';
+            item.innerText = `${index + 1}. ${track.name}`;
+            item.onclick = () => {
+                currentTrackIdx = index;
+                loadTrack(currentTrackIdx);
+                playMusic();
+                playlistMenu.classList.remove('show'); 
+            };
+            playlistMenu.appendChild(item);
+        });
+
+        function loadTrack(index) {
+            myAudio.src = tracks[index].src;
+            trackNameDisplay.innerText = tracks[index].name;
+            myAudio.load();
+            
+            const items = document.querySelectorAll('.playlist-item');
+            items.forEach((item, i) => {
+                if (i === index) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        loadTrack(currentTrackIdx);
+
+        playlistBtn.addEventListener('click', () => {
+            playlistMenu.classList.toggle('show');
+        });
+
+        function playMusic() {
+            myAudio.play().then(() => {
+                vinyl.classList.add('playing');
+                visualizer.classList.add('playing');
+                playPauseBtn.innerText = '⏸';
+            }).catch(e => console.log("Audio play prevented by browser"));
+        }
+
+        function pauseMusic() {
+            myAudio.pause();
+            vinyl.classList.remove('playing');
+            visualizer.classList.remove('playing');
+            playPauseBtn.innerText = '▶';
+        }
+
+        function togglePlay() {
+            if (myAudio.paused) playMusic();
+            else pauseMusic();
+        }
+
+        function playNextTrack() {
+            currentTrackIdx = (currentTrackIdx + 1) % tracks.length;
+            loadTrack(currentTrackIdx);
+            playMusic();
+        }
+
+        playPauseBtn.addEventListener('click', togglePlay);
+        document.getElementById('next-track-btn').addEventListener('click', playNextTrack);
+        myAudio.addEventListener('ended', playNextTrack);
+
+
+        // ----------------------------------------------------
+        // UI & SLIDER LOGIC
+        // ----------------------------------------------------
+        const giftBox = document.getElementById('gift-box');
+        const messageCard = document.getElementById('message-card');
+        const djPlayer = document.getElementById('dj-player');
+        
+        const sliderTrack = document.getElementById('slider-track');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const dots = document.querySelectorAll('.dot');
+        let currentSlide = 0;
+        const totalSlides = 5;
+
+        function triggerConfetti() {
+            var colors = ['#ff6b8b', '#ffd700', '#ffb6c1', '#ffffff', '#ff4757'];
+            confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 }, colors: colors, zIndex: 100 });
+            var end = Date.now() + (2.5 * 1000);
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0, y: 0.9 }, colors: colors, zIndex: 100 });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1, y: 0.9 }, colors: colors, zIndex: 100 });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+
+        giftBox.addEventListener('click', (e) => {
+            e.stopPropagation();
+
+            // Force stop the gift box background music
+            boxAudio.pause();
+            boxAudio.currentTime = 0;
+
+            surpriseWrapper.style.display = 'none';
+            messageCard.classList.add('show');
+            djPlayer.classList.add('show'); 
+            
+            // Start the main music and effects
+            playMusic();
+            triggerConfetti();
+        });
+
+        function updateSlider() {
+            sliderTrack.style.transform = `translateX(-${currentSlide * 20}%)`;
+            prevBtn.disabled = currentSlide === 0;
+            if (currentSlide === totalSlides - 1) {
+                nextBtn.innerHTML = "Love You! 💖";
+            } else {
+                nextBtn.innerHTML = "Next ➔";
+            }
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        nextBtn.addEventListener('click', () => {
+            triggerConfetti();
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSlider();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlider();
+            }
+        });
+    </script>
+</body>
+</html>
